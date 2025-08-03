@@ -38,7 +38,7 @@ export class FridgeService {
   async updateFridge(
     fridgeId: string,
     ownerId: string,
-    data: Partial<CreateFridgeDto>,
+    data: Partial<Omit<CreateFridgeDto, 'ownerId'>>,
   ) {
     try {
       return await this.prisma.fridge.update({
