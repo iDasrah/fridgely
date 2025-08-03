@@ -4,3 +4,13 @@ export class UserDto {
   email: string;
   createdAt: Date;
 }
+
+export class JwtPayload {
+  username: string;
+  sub: string;
+}
+
+export class JwtPayloadValidated {
+  userId: string;
+  username: string;
+}
