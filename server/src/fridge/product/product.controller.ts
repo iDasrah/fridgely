@@ -23,6 +23,20 @@ export class ProductController {
   }
 
   @UseGuards(JwtGuard)
+  @Get('expired')
+  getExpiredProducts(@Param('fridgeId') fridgeId: string) {
+    console.log('Fetching expired products for fridge:', fridgeId);
+
+    return this.productService.getExpiredProducts(fridgeId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('soon-expired')
+  getSoonExpiredProducts(@Param('fridgeId') fridgeId: string) {
+    return this.productService.getSoonExpiredProducts(fridgeId);
+  }
+
+  @UseGuards(JwtGuard)
   @Get(':productId')
   getProduct(
     @Param('fridgeId') fridgeId: string,
@@ -65,4 +79,5 @@ export class ProductController {
   ) {
     return this.productService.deleteProduct(productId, fridgeId);
   }
+
 }

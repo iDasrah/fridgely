@@ -81,4 +81,47 @@ export class ProductService {
       throw err;
     }
   }
+
+  async getExpiredProducts(fridgeId: string) {
+    try {
+      return await this.prisma.product.findMany({
+        where: {
+          fridgeId,
+          expirationDate: {
+            lt: new Date(),
+          },
+        },
+      });
+    } catch (err: unknown) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2025' // record not found
+      ) {
+        throw new NotFoundException('Fridge not found');
+      }
+      throw err;
+    }
+  }
+
+  async getSoonExpiredProducts(fridgeId: string) {
+    try {
+      return await this.prisma.product.findMany({
+        where: {
+          fridgeId,
+          expirationDate: {
+            gte: new Date(),
+            lt: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000), // within the 3 next days
+          },
+        },
+      });
+    } catch (err: unknown) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2025' // record not found
+      ) {
+        throw new NotFoundException('Fridge not found');
+      }
+      throw err;
+    }
+  }
 }
