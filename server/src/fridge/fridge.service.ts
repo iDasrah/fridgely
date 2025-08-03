@@ -7,13 +7,10 @@ import { CreateFridgeDto } from './dto/create-fridge.dto';
 export class FridgeService {
   constructor(private prisma: PrismaService) {}
 
-  async getFridge(fridgeId: string) {
+  async getFridge(fridgeId: string, ownerId: string) {
     try {
       return await this.prisma.fridge.findUnique({
-        where: { id: fridgeId },
-        include: {
-          products: true,
-        },
+        where: { id: fridgeId, ownerId },
       });
     } catch (err: unknown) {
       if (
@@ -26,16 +23,26 @@ export class FridgeService {
     }
   }
 
+  async getFridges(userId: string) {
+    return this.prisma.fridge.findMany({
+      where: { ownerId: userId },
+    });
+  }
+
   createFridge(createFridgeDto: CreateFridgeDto) {
     return this.prisma.fridge.create({
       data: createFridgeDto,
     });
   }
 
-  async updateFridge(fridgeId: string, data: Partial<CreateFridgeDto>) {
+  async updateFridge(
+    fridgeId: string,
+    ownerId: string,
+    data: Partial<CreateFridgeDto>,
+  ) {
     try {
       return await this.prisma.fridge.update({
-        where: { id: fridgeId },
+        where: { id: fridgeId, ownerId },
         data,
       });
     } catch (err: unknown) {
