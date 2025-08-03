@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as argon2 from 'argon2';
-import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +11,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string) {
+  async validateUser(email: string, password: string): Promise<UserDto | null> {
     const user = await this.userService.getUserByEmail(email);
     if (!user) {
       return null;
@@ -22,6 +22,7 @@ export class AuthService {
       return null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = user;
     return result;
   }
@@ -43,7 +44,7 @@ export class AuthService {
     return result;
   }
 
-  login(user: LoginDto) {
+  login(user: UserDto) {
     const payload = { username: user.name, sub: user.id };
 
     return {
