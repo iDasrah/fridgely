@@ -1,13 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post, Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { JwtPayloadValidated } from '../auth/dto/user.dto';
+import { JwtPayloadValidatedDto } from '../auth/dto/jwt-payload.dto';
 import { FridgeService } from './fridge.service';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { CreateFridgeDto } from './dto/create-fridge.dto';
@@ -18,14 +19,14 @@ export class FridgeController {
 
   @UseGuards(JwtGuard)
   @Get()
-  getFridges(@Req() req: { user: JwtPayloadValidated }) {
+  getFridges(@Req() req: { user: JwtPayloadValidatedDto }) {
     return this.fridgeService.getFridges(req.user.userId);
   }
 
   @UseGuards(JwtGuard)
   @Get(':fridgeId')
   getFridge(
-    @Req() req: { user: JwtPayloadValidated },
+    @Req() req: { user: JwtPayloadValidatedDto },
     @Param('fridgeId') fridgeId: string,
   ) {
     return this.fridgeService.getFridge(fridgeId, req.user.userId);
@@ -34,7 +35,7 @@ export class FridgeController {
   @UseGuards(JwtGuard)
   @Post()
   createFridge(
-    @Req() req: { user: JwtPayloadValidated },
+    @Req() req: { user: JwtPayloadValidatedDto },
     @Body() createFridgeDto: CreateFridgeDto,
   ) {
     return this.fridgeService.createFridge({
@@ -46,7 +47,7 @@ export class FridgeController {
   @UseGuards(JwtGuard)
   @Put(':fridgeId')
   updateFridge(
-    @Req() req: { user: JwtPayloadValidated },
+    @Req() req: { user: JwtPayloadValidatedDto },
     @Param('fridgeId') fridgeId: string,
     @Body() updateFridgeDto: Partial<CreateFridgeDto>,
   ) {
@@ -56,4 +57,14 @@ export class FridgeController {
       updateFridgeDto,
     );
   }
+
+  @UseGuards(JwtGuard)
+  @Delete(':fridgeId')
+  deleteFridge(
+    @Req() req: { user: JwtPayloadValidatedDto },
+    @Param('fridgeId') fridgeId: string,
+  ) {
+    return this.fridgeService.deleteFridge(fridgeId, req.user.userId);
+  }
+
 }

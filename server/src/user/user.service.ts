@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UserDto } from './dto/user.dto';
 import { Prisma } from 'generated/prisma';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class UserService {
     }
   }
 
-  async createUser(data: CreateUserDto) {
+  async createUser(data: CreateUserDto): Promise<UserDto> {
     try {
       return await this.prisma.user.create({ data });
     } catch (err: unknown) {
@@ -57,7 +57,7 @@ export class UserService {
     }
   }
 
-  async updateUser(userId: string, data: Partial<CreateUserDto>) {
+  async updateUser(userId: string, data: Partial<UserDto>) {
     try {
       return await this.prisma.user.update({
         where: { id: userId },

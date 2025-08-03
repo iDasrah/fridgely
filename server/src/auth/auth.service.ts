@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  Injectable,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
-import { UserDto } from './dto/user.dto';
+import { UserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +16,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   async validateUser(email: string, password: string): Promise<UserDto | null> {
     const user = await this.userService.getUserByEmail(email);
     if (!user) {
@@ -22,15 +28,18 @@ export class AuthService {
       return null;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...result } = user;
-    return result;
+    return new UserDto(user);
   }
 
-  async registerUser(name: string, email: string, password: string) {
+  @UseInterceptors(ClassSerializerInterceptor)
+  async registerUser(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<UserDto> {
     const existingUser = await this.userService.getUserByEmail(email);
     if (existingUser) {
-      throw new Error('User already exists');
+      throw new BadRequestException('User already exists');
     }
 
     const hashedPassword = await argon2.hash(password);
@@ -40,8 +49,7 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const { password: _, ...result } = newUser;
-    return result;
+    return new UserDto(newUser);
   }
 
   login(user: UserDto) {

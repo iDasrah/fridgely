@@ -56,10 +56,10 @@ export class FridgeService {
     }
   }
 
-  async deleteFridge(fridgeId: string) {
+  async deleteFridge(fridgeId: string, ownerId: string) {
     try {
       return await this.prisma.fridge.delete({
-        where: { id: fridgeId },
+        where: { id: fridgeId, ownerId },
       });
     } catch (err: unknown) {
       if (

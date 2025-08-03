@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import fromAuthHeaderAsBearerToken = ExtractJwt.fromAuthHeaderAsBearerToken;
-import { JwtPayload, JwtPayloadValidated } from '../dto/user.dto';
+import { JwtPayloadDto, JwtPayloadValidatedDto } from '../dto/jwt-payload.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: JwtPayload): JwtPayloadValidated {
+  validate(payload: JwtPayloadDto): JwtPayloadValidatedDto {
     return { userId: payload.sub, username: payload.username };
   }
 }
