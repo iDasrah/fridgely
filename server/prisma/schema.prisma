@@ -24,12 +24,13 @@ model User {
 }
 
 model Fridge {
-    id        String    @id @default(cuid(2))
-    name      String
-    owner     User      @relation(fields: [ownerId], references: [id])
-    ownerId   String
-    products  Product[]
-    createdAt DateTime  @default(now())
+    id          String    @id @default(cuid(2))
+    name        String
+    description String?
+    owner       User      @relation(fields: [ownerId], references: [id])
+    ownerId     String
+    products    Product[]
+    createdAt   DateTime  @default(now())
 }
 
 model Product {
